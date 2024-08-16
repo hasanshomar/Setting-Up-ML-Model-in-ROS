@@ -1,0 +1,118 @@
+# Create a Subscriber Node**
+---
+1. **Navigate to Your Package Directory**:
+   - Go to the directory where your package is located:
+
+   ```bash
+   cd ~/ros2_ws_test/src/image_processor_test
+   ```
+
+2. **Create a Python Script for the Subscriber**:
+   - Inside the `scripts` directory, create a new Python script named `image_subscriber.py`:
+
+   ```bash
+   cd image_processor_test/scripts
+   touch image_subscriber.py
+   ```
+
+3. **Write the Subscriber Node Script**:
+   - Open the `image_subscriber.py` file with a text editor:
+
+   ```bash
+   gedit image_subscriber.py
+   ```
+
+   - Add the following code to create a simple subscriber node that listens to the image topic and processes each incoming image:
+
+   ```python
+   #!/usr/bin/env python3
+
+   import rclpy
+   from rclpy.node import Node
+   from sensor_msgs.msg import Image
+   from cv_bridge import CvBridge
+   import cv2
+
+   class ImageSubscriber(Node):
+       def __init__(self):
+           super().__init__('image_subscriber')
+           self.subscription = self.create_subscription(
+               Image,
+               'image_topic',
+               self.listener_callback,
+               10)
+           self.subscription  # prevent unused variable warning
+           self.bridge = CvBridge()
+
+       def listener_callback(self, msg):
+           self.get_logger().info('Receiving image')
+           # Convert ROS Image message to OpenCV image
+           cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+
+           # Display the image using OpenCV (for visualization purposes)
+           cv2.imshow("Received Image", cv_image)
+           cv2.waitKey(1)
+
+   def main(args=None):
+       rclpy.init(args=args)
+       image_subscriber = ImageSubscriber()
+       rclpy.spin(image_subscriber)
+       image_subscriber.destroy_node()
+       rclpy.shutdown()
+
+   if __name__ == '__main__':
+       main()
+   ```
+
+4. **Make the Script Executable**:
+   - After saving the file, make it executable:
+
+   ```bash
+   chmod +x image_subscriber.py
+   ```
+
+5. **Update `setup.py`**:
+   - Open the `setup.py` file and add the subscriber node to the `entry_points` section:
+   ```bash
+   
+   ```python
+   entry_points={
+       'console_scripts': [
+           'image_publisher = image_processor_test.scripts.image_publisher:main',
+           'image_subscriber = image_processor_test.scripts.image_subscriber:main',
+       ],
+   },
+   ```
+
+6. **Rebuild the Workspace**:
+   - Rebuild the workspace to include the new script:
+
+   ```bash
+   cd ~/ros2_ws_test
+   colcon build --packages-select image_processor_test
+   ```
+
+7. **Source the Workspace**:
+   - After building, source the workspace:
+
+   ```bash
+   source install/setup.bash
+   ```
+
+
+## **Run the Image Publisher Node**:
+   - In one terminal, start the image publisher node:
+
+   ```bash
+   ros2 run image_processor_test image_publisher
+   ```
+
+## **Run the Image Subscriber Node**:
+   - Open a new terminal, source the workspace, and run the image subscriber node:
+
+   ```bash
+   ros2 run image_processor_test image_subscriber
+   ```
+
+## **Visualize the Output**:
+   - The subscriber node will receive images published by the publisher node and display them using OpenCV. You should see the images appear in a window as they are received.
