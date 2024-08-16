@@ -243,7 +243,7 @@ This directory structure should help in organizing and locating the results for 
 - **Image Naming**: The original image's filename is extracted from the message's `header.frame_id`, ensuring the output files maintain consistency with the input filenames.
 - **Image Saving**: Images are saved in a subfolder named after the original image filename with `_results` appended.
 
-For a more detailed explanation of how this script works and what it does (its different components) go to the following page: 
+For a more detailed explanation of how this script works and what it does (its different components) go to [this page](https://github.com/hasanshomar/Setting-Up-ML-Model-in-ROS/blob/main/ML%20Integration/Subscriber%20Node%20Script.md)
 
 ### **Step 2: Update the `setup.py`**
 
